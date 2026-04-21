@@ -9,7 +9,7 @@
     margin: 0; 
     padding: 20px; 
     /* ---- ĐOẠN LỆNH THÊM ẢNH NỀN ---- */
-    background-image: url('anhnen.jpg');
+    background-image: url('taixuong.png');
     background-size: cover; 
     background-attachment: fixed; 
     background-position: center; 
@@ -82,7 +82,7 @@ async function taiDuLieuTuExcel() {
             
             const cot = hangHienTai.split('\t');
             
-            if (cot.length >= 8) {
+            if (cot.length >= 7) {
                 // HÀM DỌN RÁC: Xóa khoảng trắng thừa và dấu ngoặc kép ẩn từ Google Sheet
                 const lamSach = (chuoi) => {
                     if (!chuoi) return "";
@@ -94,8 +94,8 @@ async function taiDuLieuTuExcel() {
                     id: i, 
                     chuDe: lamSach(cot[1]),
                     cauHoi: lamSach(cot[2]),
-                    cacDapAn: [lamSach(cot[3]), lamSach(cot[4]), lamSach(cot[5]), lamSach(cot[6])],
-                    dapAnDung: lamSach(cot[7]) // Cột H
+                    cacDapAn: [lamSach(cot[3]), lamSach(cot[4]), lamSach(cot[5])],
+                    dapAnDung: lamSach(cot[6]) // Cột H
                 });
             }
         }
