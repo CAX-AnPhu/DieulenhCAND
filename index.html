@@ -83,18 +83,19 @@ async function taiDuLieuTuExcel() {
             if (hangHienTai === "") continue;
             const cot = hangHienTai.split('\t');
             
-            if (cot.length >= 8) { // Đảm bảo có đủ 8 cột
-                const lamSach = (chuoi) => chuoi ? chuoi.trim().replace(/^"|"$/g, '') : "";
-                
-                nganHangCauHoi.push({
-                    id: i, 
-                    chuDe: lamSach(cot[1]),
-                    cauHoi: lamSach(cot[2]),
-                    cacDapAn: [lamSach(cot[3]), lamSach(cot[4]), lamSach(cot[5])],
-                    dapAnDung: lamSach(cot[6]),
-                    bo: lamSach(cot[7]) // Cột I: Bộ câu hỏi
-                });
-            }
+            // Trong vòng lặp for của hàm taiDuLieuTuExcel
+            if (cot.length >= 8) {
+             const lamSach = (chuoi) => chuoi ? chuoi.trim().replace(/^"|"$/g, '') : "";
+    
+             nganHangCauHoi.push({
+                id: i, 
+                chuDe: lamSach(cot[1]),
+                cauHoi: lamSach(cot[2]),
+                cacDapAn: [lamSach(cot[3]), lamSach(cot[4]), lamSach(cot[5])],
+                dapAnDung: lamSach(cot[6]),
+                tenBo: lamSach(cot[7]) // Đây là cột "Bộ đề thi"
+            });
+        }
         }
         document.getElementById("nut-vao-thi").disabled = false;
         document.getElementById("nut-vao-thi").innerText = "Vào Thi Màn Hình Dọc";
@@ -107,21 +108,17 @@ async function taiDuLieuTuExcel() {
 function hienThiCauHoi() {
     let container = document.getElementById("danh-sach-cau-hoi");
     
-    // --- BƯỚC MỚI: CHỌN BỘ CÂU HỎI NGẪU NHIÊN ---
-    // Lấy danh sách các tên Bộ duy nhất (ví dụ: ["Bộ 1", "Bộ 2"])
-    let danhSachTenBo = [...new Set(nganHangCauHoi.map(item => item.bo))];
+    // 1. Lấy danh sách các tên bộ đề duy nhất có trong dữ liệu
+    let danhSachTenBo = [...new Set(nganHangCauHoi.map(q => q.tenBo))];
     
-    // Chọn ngẫu nhiên 1 tên bộ
-    let boNgauNhien = danhSachTenBo[Math.floor(Math.random() * danhSachTenBo.length)];
+    // 2. Chọn ngẫu nhiên 1 tên bộ (Ví dụ: "Bộ 1" hoặc "Bộ 2")
+    let boDuocChon = danhSachTenBo[Math.floor(Math.random() * danhSachTenBo.length)];
     
-    // Lọc ra danh sách câu hỏi thuộc bộ đó
-    let cauHoiTrongBo = nganHangCauHoi.filter(item => item.bo === boNgauNhien);
+    // 3. Lọc ra những câu hỏi chỉ thuộc bộ được chọn
+    let cauHoiTheoBo = nganHangCauHoi.filter(q => q.tenBo === boDuocChon);
     
-    // Thông báo cho thí sinh biết họ đang thi bộ nào (tùy chọn)
-    console.log("Đang thi: " + boNgauNhien);
-    
-    // Xáo trộn các câu hỏi trong bộ đó
-    let cauHoiDaTron = tronMang([...cauHoiTrongBo]); 
+    // 4. Xáo trộn thứ tự các câu hỏi trong bộ đó
+    let cauHoiDaTron = tronMang([...cauHoiTheoBo]); 
 
     let htmlString = "";
     cauHoiDaTron.forEach((ch, index) => {
@@ -134,7 +131,8 @@ function hienThiCauHoi() {
         });
         htmlString += `</div></div>`;
     });
-    container.innerHTML = htmlString;
+    
+    container.innerHTML = `<p style="text-align:center; color:#7f8c8d;">Đang sử dụng: <b>${boDuocChon}</b></p>` + htmlString;
 }
 
 taiDuLieuTuExcel();
